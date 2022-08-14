@@ -74,7 +74,7 @@ def execute_get_price(url, asin, name):
     return title, name, price
         
 # To use threading, we use concurrent.futures.ThreadPoolExecutor()
-asin = "B086XG5J1Q"
+asin = "B07WVFCVJN"
 with concurrent.futures.ThreadPoolExecutor() as executor:
     results = []
     # Looping through different amazon stores.
