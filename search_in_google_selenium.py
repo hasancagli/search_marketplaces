@@ -51,5 +51,6 @@ def get_data(title):
     
     return productslist
     
-data = get_data("2021 Apple 10.2-inch iPad (Wi-Fi, 64GB) - Silver")
+data = get_data("Roku Express 4K+ 2021 | Streaming Media Player HD/4K/HDR with Smooth Wireless Streaming and Roku Voice Remote with TV Controls, Includes Premium HDMI® Cable")
 print(data)
+browser.quit()
