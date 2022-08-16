@@ -1,6 +1,6 @@
+# IMPORT RELATED LIBRARIES
 import requests
 from bs4 import BeautifulSoup
-
 
 def get_data_google(title):
     url = "https://www.google.com/search?q=" + title +"&gs_lcp=Cgdnd3Mtd2l6EAMyBwgAEEcQsAMyBwgAEEcQsAMyBwgAEEcQsAMyBwgAEEcQsAMyBwgAEEcQsAMyBwgAEEcQsAMyBwgAEEcQsAMyBwgAEEcQsANKBAhBGABKBAhGGABQzQJYzQJg8QdoAXABeACAAQCIAQCSAQCYAQCgAQKgAQHIAQjAAQE&sclient=gws-wiz"

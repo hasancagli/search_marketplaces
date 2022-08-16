@@ -1,3 +1,4 @@
+# IMPORT RELATED LIBRARIES
 from bs4 import BeautifulSoup
 import requests
 import concurrent.futures
@@ -11,8 +12,8 @@ from search_different_marketplaces_amazon import get_price, execute_get_price, r
 from search_in_ebay import get_data, parse
 from search_in_google_bs4 import get_data_google
 
+# SET INITIAL VARIABLES
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
-
 amazon_dict = {
     "amazon.com": "United States",
     "amazon.ca": "Canada",
@@ -32,7 +33,7 @@ amazon_dict = {
     "amazon.nl"  :"Netherlands"
 }
 
-asin = input("Enter ASIN: ")
+asin = input("Enter ASIN: ") # will search by asin number of the product.
 
 # AMAZON DATA
 amazon_data = run_program(amazon_dict, asin)
@@ -45,7 +46,7 @@ for i in amazon_data:
 
 print("\n")
 
-# FIND TITLE
+# FIND TITLE OF THE PRODUCT
 title_to_search = ""
 forbidden = ["Mexico", "Brazil", "Spain", "Italy", "Germany", "Netherlands", "France", "Turkey", "Japan"]
 for i in amazon_data:
@@ -55,8 +56,6 @@ for i in amazon_data:
     if (name not in forbidden):
         if(title != "No Product" and title != "No title information."):
             title_to_search = title
-
-print("TITLE TO SEARCH: ", title_to_search)
 
 if title_to_search != "":
     # EBAY DATA

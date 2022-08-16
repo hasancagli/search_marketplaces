@@ -1,9 +1,10 @@
+# IMPORT RELATED LIBRARIES
 from bs4 import BeautifulSoup
 import requests
 import concurrent.futures
 
+# SET INITIAL VARIABLES
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"}
-
 amazon_dict = {
     "amazon.com": "United States",
     "amazon.ca": "Canada",
@@ -23,7 +24,7 @@ amazon_dict = {
     "amazon.nl"  :"Netherlands"
 }
 
-
+# WILL RETURN title, name, price and url of the product
 def get_price(url, asin, name):
     URL = 'https://www.{}/dp/{}'.format(url, asin)
     
@@ -33,12 +34,14 @@ def get_price(url, asin, name):
     soup1 = BeautifulSoup(page.content, "html.parser")
     soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
     
+    # GET TITLE
     try:
         title = soup2.find(id='productTitle').get_text()
     except:
         title = "No title information."
     
     price_label = soup2.find(id="apex_desktop") # Get main price div by id.
+    # GET PRICE
     try:
         price = price_label.find_all("span", class_ = "a-offscreen")
     except:
@@ -46,7 +49,7 @@ def get_price(url, asin, name):
             price = list(soup2.find(id="price"))
         except:
             price = []
-
+    # SET PRICE TEXT
     price_text = ""
     a = 0
     for i in price:
@@ -71,9 +74,8 @@ def execute_get_price(url, asin, name):
             count -= 1
     return title, name, price, URL
 
-asin = "B07WVFCVJN"
 def run_program(amazon_dict, asin):
-# To use threading, we use concurrent.futures.ThreadPoolExecutor()
+    # To use threading, we use concurrent.futures.ThreadPoolExecutor()
     return_list = []
 
     with concurrent.futures.ThreadPoolExecutor() as executor:

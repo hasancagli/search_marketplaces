@@ -1,6 +1,8 @@
+# IMPORT RELATED LIBRARIES
 import requests
 from bs4 import BeautifulSoup
 
+# GET DATA FROM THE URL
 def get_data(title):
     url = "https://www.ebay.com/sch/i.html?_nkw=" + title
     
@@ -8,11 +10,11 @@ def get_data(title):
     soup = BeautifulSoup(page.text, "html.parser")
     return soup
 
+# PARSE DATA AND GET REQUIRED INFOS
 def parse(soup):
     productslist = []
     
     results=soup.find_all('li',{'class':'s-item'})
-    
     filter_count = 4
     
     for item in results:
