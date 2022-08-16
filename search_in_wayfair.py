@@ -38,6 +38,6 @@ def get_data(title):
 
 
 # Get related data by product title    
-data = get_data("(2022 Upgrade) AIPER Cordless Robotic Pool Cleaner, Pool Vacuum with Dual-Drive Motors, Self-Parking, Lightweight, Perfect for Above/In-Ground Flat Pools up to 35 Feet (Lasts 50 Mins) - Seagull 600")
+data = get_data("Roku Express 4K+ 2021 | Streaming Media Player HD/4K/HDR with Smooth Wireless Streaming and Roku Voice Remote with TV Controls, Includes Premium HDMI® Cable")
 
 print(data)
