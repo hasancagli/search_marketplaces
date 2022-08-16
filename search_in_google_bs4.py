@@ -40,7 +40,7 @@ def get_data(title):
         except:
             link = "No Link"
             
-        if (title != "" and title != "No Title" and price != "No Price"):
+        if (title != "" and title != "No Title" and link != "No Link"):
         
             product = {
                 'title': title,
