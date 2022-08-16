@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import concurrent.futures
 
-headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"}
 
 amazon_dict = {
     "amazon.com": "United States",
@@ -29,7 +29,7 @@ def get_price(url, asin, name):
     
     page = requests.get(URL, headers=headers)
     if (page.status_code == 404):
-        return "No Product", name, "No Product"
+        return "No Product", name, "No Product", URL
     soup1 = BeautifulSoup(page.content, "html.parser")
     soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
     
@@ -37,15 +37,13 @@ def get_price(url, asin, name):
         title = soup2.find(id='productTitle').get_text()
     except:
         title = "No title information."
-        
-    price_label = soup2.find(id="apex_desktop") # Get main price div by id.
     
+    price_label = soup2.find(id="apex_desktop") # Get main price div by id.
     try:
         price = price_label.find_all("span", class_ = "a-offscreen")
     except:
         try:
             price = list(soup2.find(id="price"))
-
         except:
             price = []
 
@@ -60,30 +58,40 @@ def get_price(url, asin, name):
     if " - " in price_text:
         price_text = price_text[:-3]
     
-    return title, name, price_text
+    return title, name, price_text, URL
 
 def execute_get_price(url, asin, name):
-    title, name, price = get_price(url, asin, name)
+    title, name, price, URL = get_price(url, asin, name)
     if (title == "No title information."):
         count = 10
         while count > 0:
-            title, name, price = get_price(url, asin, name)
+            title, name, price, URL = get_price(url, asin, name)
             if (title != "No title information."):
                 break
             count -= 1
-    return title, name, price
-        
-# To use threading, we use concurrent.futures.ThreadPoolExecutor()
+    return title, name, price, URL
+
 asin = "B07WVFCVJN"
-with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = []
-    # Looping through different amazon stores.
-    for url,name in amazon_dict.items():
-        results.append(executor.submit(execute_get_price, url, asin, name))
-    #results = [executor.submit(get_price, url, asin, name) for url,name in amazon_dict.items()]
-    for f in concurrent.futures.as_completed(results):
-       title, name, price = f.result()
-       print(name, "-", price)
+def run_program(amazon_dict, asin):
+# To use threading, we use concurrent.futures.ThreadPoolExecutor()
+    return_list = []
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = []
+        # Looping through different amazon stores.
+        for url,name in amazon_dict.items():
+            results.append(executor.submit(execute_get_price, url, asin, name))
+        #results = [executor.submit(get_price, url, asin, name) for url,name in amazon_dict.items()]
+        for f in concurrent.futures.as_completed(results):
+           title, name, price, URL = f.result()
+           product = {
+                "title": title,
+                'name': name,
+                'price': price,
+                'link': URL
+           }
+           return_list.append(product)
+    return return_list
 
 """
 threads = []
