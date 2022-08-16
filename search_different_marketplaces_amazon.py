@@ -30,15 +30,21 @@ def get_price(url, asin, name):
     
     page = requests.get(URL, headers=headers)
     if (page.status_code == 404):
-        return "No Product", name, "No Product", URL
-    soup1 = BeautifulSoup(page.content, "html.parser")
-    soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
+        return "No Product", name, "No Product", URL, "No Image Source information."
+    soup1 = BeautifulSoup(page.content, "lxml")
+    soup2 = BeautifulSoup(soup1.prettify(), "lxml")
     
     # GET TITLE
     try:
-        title = soup2.find(id='productTitle').get_text()
+        title = soup2.find('span', {'id': 'productTitle'}).get_text()
     except:
         title = "No title information."
+    
+    # GET IMAGE_SRC
+    try:
+        image_src = soup2.find(id='imgTagWrapperId').find('img')['src']
+    except:
+        image_src = "No Image Source information."
     
     price_label = soup2.find(id="apex_desktop") # Get main price div by id.
     # GET PRICE
@@ -61,18 +67,18 @@ def get_price(url, asin, name):
     if " - " in price_text:
         price_text = price_text[:-3]
     
-    return title, name, price_text, URL
+    return title, name, price_text, URL, image_src
 
 def execute_get_price(url, asin, name):
-    title, name, price, URL = get_price(url, asin, name)
-    if (title == "No title information."):
-        count = 10
+    title, name, price, URL, image_src = get_price(url, asin, name)
+    if (title == "No title information." or price==""):
+        count = 3
         while count > 0:
-            title, name, price, URL = get_price(url, asin, name)
+            title, name, price, URL, image_src = get_price(url, asin, name)
             if (title != "No title information."):
                 break
             count -= 1
-    return title, name, price, URL
+    return title, name, price, URL, image_src
 
 def run_program(amazon_dict, asin):
     # To use threading, we use concurrent.futures.ThreadPoolExecutor()
@@ -85,12 +91,13 @@ def run_program(amazon_dict, asin):
             results.append(executor.submit(execute_get_price, url, asin, name))
         #results = [executor.submit(get_price, url, asin, name) for url,name in amazon_dict.items()]
         for f in concurrent.futures.as_completed(results):
-           title, name, price, URL = f.result()
+           title, name, price, URL, image_src = f.result()
            product = {
                 "title": title,
                 'name': name,
                 'price': price,
-                'link': URL
+                'link': URL,
+                'image_src': image_src
            }
            return_list.append(product)
     return return_list

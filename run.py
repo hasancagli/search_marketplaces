@@ -42,6 +42,7 @@ for i in amazon_data:
     print("Name: ", i['name'])
     print("Price: ", i['price'])
     print("Link: ", i['link'])
+    print("Image Source: ", i['image_src'])
     print("***************")
 
 print("\n")
